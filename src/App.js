@@ -1,26 +1,40 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// to use components
+import { Cards, Charts, CountryPicker} from './components';
+import { fetchData } from './api';
+import styles from './App.module.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+    // creating states
+    state = {
+        data: {},
+        country: ""
+    }
+
+    handleChange = async (country) => {
+        const data = await fetchData(country);
+        this.setState({ data: data, country:country });
+    }
+
+
+    async componentDidMount(){
+        const data = await fetchData();
+        this.setState({ data: data});
+        
+    };
+     
+    render() {
+        return(
+            <div className={styles.container}>
+                <h1>covid-19</h1>
+                <Cards data= { this.state.data} />
+                <CountryPicker handleChange={this.handleChange} />
+                <Charts data={this.state.data} country={this.state.country}/>
+                
+            </div>
+        )
+    }
 }
 
 export default App;
